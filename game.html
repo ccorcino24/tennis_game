@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Old School Tennis Game</title>
+</head>
+<canvas id="gameCanvas" width="800" height="600"></canvas>
+
+<script>
+let canvas;
+let canvasContext;
+let ballX = 50;
+let ballY = 50;
+let ballSpeedX = 10;
+let ballSpeedY = 5;
+
+let paddle1Y= 250;
+let paddle2Y= 250;
+
+const PADDLE_HEIGHT = 100;
+
+function calcMousePosition(evt) {
+	let rect = canvas.getBoundingClientRect();
+	let rootEl = document.documentElement;
+	let mouseX = evt.clientX - rect.left - rootEl.scrollLeft;
+	let mouseY = evt.clientY - rect.top - rootEl.scrollTop;
+
+	return {
+		x: mouseX,
+		y: mouseY
+	}
+}
+
+window.onload = function () {
+	//Loads elements after window loads
+	canvas = document.getElementById("gameCanvas");
+	canvasContext = canvas.getContext("2d");
+
+	//designates how smooth the ball will move in setTimeout
+    let framesPerSecond = 50;
+
+    //designates how smooth the ball moves per 1sec
+    setInterval(function() { 
+    	ballMovement();
+    	drawEnvironment();
+    }, 1000/framesPerSecond);
+
+    canvas.addEventListener('mousemove', 
+    	function(evt) {
+    		let mousePosition = calcMousePosition(evt);
+    		paddle1Y = mousePosition.y - (PADDLE_HEIGHT/2);
+    		// paddle2Y = mousePosition.y;
+
+    })
+}
+
+function ballMovement(){
+		//How fast the ball moves
+		ballX = ballX + ballSpeedX;
+		ballY = ballY + ballSpeedY;
+
+		//if the position of the ball is less than 0 go right
+		if(ballX < 0) {
+			ballSpeedX = -ballSpeedX;
+		}
+
+		//if the position of the ball is greater than canvas width go left
+		if(ballX > canvas.width) {
+			ballSpeedX = -ballSpeedX;
+		}	
+
+		//if the position of the ball is less than 0 go right
+		if(ballY < 0) {
+			ballSpeedY = -ballSpeedY;
+		}
+
+		//if the position of the ball is greater than canvas width go left
+		if(ballY > canvas.height) {
+			ballSpeedY = -ballSpeedY;
+		}
+}
+
+function drawEnvironment(){
+	//Creates a black rectangle(canvas)
+	colorRectangle(0, 0, canvas.width, canvas.height, "blue");
+	//Creates a white paddle for the left player
+	colorRectangle(15, paddle1Y, 10, PADDLE_HEIGHT, "white"); 
+	//Creates the ball for the game
+	colorBall(ballX, ballY, 10, "white")
+}
+
+function colorBall(centerX, centerY, radius, color){
+	canvasContext.fillStyle = color;
+	canvasContext.beginPath();
+	canvasContext.arc(centerX, centerY, radius, 0, Math.PI * 2, true);
+	canvasContext.fill();
+}
+
+function colorRectangle(leftX, topY, width, height, color){
+	//Fills the canvas with color parameter
+	canvasContext.fillStyle = color;
+	//Creates the dimensions of the desired shape with parameters
+	canvasContext.fillRect(leftX, topY, width, height); 
+}
+
+</script>
+</html>
