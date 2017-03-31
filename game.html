@@ -16,6 +16,7 @@ let ballSpeedY = 5;
 let paddle1Y= 250;
 let paddle2Y= 250;
 
+const PADDLE_THICKNESS = 10;
 const PADDLE_HEIGHT = 100;
 
 function calcMousePosition(evt) {
@@ -48,9 +49,20 @@ window.onload = function () {
     	function(evt) {
     		let mousePosition = calcMousePosition(evt);
     		paddle1Y = mousePosition.y - (PADDLE_HEIGHT/2);
-    		// paddle2Y = mousePosition.y;
+    		paddle2Y = mousePosition.y;
 
     })
+}
+
+
+//Resets Ball position after scoring
+function resetBall() {
+
+	ballSpeedX = -ballSpeedX;
+	//gives horizontal center
+	ballX = canvas.width/2;
+	//gives vertical center
+	ballY = canvas.height/2;
 }
 
 function ballMovement(){
@@ -58,24 +70,35 @@ function ballMovement(){
 		ballX = ballX + ballSpeedX;
 		ballY = ballY + ballSpeedY;
 
-		//if the position of the ball is less than 0 go right
+		//resets ball position after other player scores
 		if(ballX < 0) {
-			ballSpeedX = -ballSpeedX;
+			if(ballY > paddle1Y && ballY < (paddle1Y + PADDLE_HEIGHT)){
+
+				ballSpeedX = -ballSpeedX;
+			} else {
+			resetBall();
+			}
 		}
 
 		//if the position of the ball is greater than canvas width go left
 		if(ballX > canvas.width) {
-			ballSpeedX = -ballSpeedX;
+			if(ballY > paddle2Y && ballY < (paddle2Y + PADDLE_HEIGHT)){
+				ballSpeedX = -ballSpeedX;
+			} else {
+			resetBall();
+			}
 		}	
 
 		//if the position of the ball is less than 0 go right
 		if(ballY < 0) {
+
 			ballSpeedY = -ballSpeedY;
 		}
 
 		//if the position of the ball is greater than canvas width go left
 		if(ballY > canvas.height) {
-			ballSpeedY = -ballSpeedY;
+			
+			ballSpeedY= -ballSpeedY;
 		}
 }
 
@@ -83,7 +106,9 @@ function drawEnvironment(){
 	//Creates a black rectangle(canvas)
 	colorRectangle(0, 0, canvas.width, canvas.height, "blue");
 	//Creates a white paddle for the left player
-	colorRectangle(15, paddle1Y, 10, PADDLE_HEIGHT, "white"); 
+	colorRectangle(15, paddle1Y, PADDLE_THICKNESS, PADDLE_HEIGHT, "white");
+	//Creates a white paddle on the for the computer
+	colorRectangle(canvas.width- 15 - PADDLE_THICKNESS, paddle2Y, PADDLE_THICKNESS, PADDLE_HEIGHT, "white"); 
 	//Creates the ball for the game
 	colorBall(ballX, ballY, 10, "white")
 }
@@ -94,6 +119,7 @@ function colorBall(centerX, centerY, radius, color){
 	canvasContext.arc(centerX, centerY, radius, 0, Math.PI * 2, true);
 	canvasContext.fill();
 }
+
 
 function colorRectangle(leftX, topY, width, height, color){
 	//Fills the canvas with color parameter
