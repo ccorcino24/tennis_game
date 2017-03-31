@@ -1,5 +1,5 @@
 # tennis_game
-An old school Tennis Game Coded in Javascript
+An old school Tennis Game Clone Coded in Javascript
 
 TO PLAY:
 1. git clone or download file.

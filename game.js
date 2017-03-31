@@ -11,6 +11,9 @@ let ballSpeedY = 5;
 
 let player1Score = 0;
 let player2Score = 0;
+const WINNING_SCORE = 2;
+
+let winScreen = false;
 
 let paddle1Y = 250;
 let paddle2Y = 250;
@@ -52,6 +55,12 @@ window.onload = function () {
 
 //Resets Ball position after scoring
 function resetBall() {
+	//Win conditions
+	if (player1Score >= WINNING_SCORE || player2Score >= WINNING_SCORE){
+		player1Score = 0;
+		player2Score = 0;
+		winScreen = true;
+	}
 
 	ballSpeedX = -ballSpeedX;
 	//Gives horizontal center
@@ -72,51 +81,72 @@ function computerMovement(){
 }
 
 function ballMovement(){
-		//Computer AI
-		computerMovement();
 
-		//How fast the ball moves
-		ballX += ballSpeedX;
-		ballY += ballSpeedY;
+	if (winScreen) {
+		return;
+	}
 
-		//Resets ball position after other player scores
-		if (ballX < 0) {
-			if (ballY > paddle1Y && ballY < (paddle1Y + PADDLE_HEIGHT)){
+	//Computer AI
+	computerMovement();
 
-				ballSpeedX = -ballSpeedX;
-			} else {
-			//Adds point to player 2
-			resetBall();
-			player2Score++;
-			}
+	//How fast the ball moves
+	ballX += ballSpeedX;
+	ballY += ballSpeedY;
+
+	//Resets ball position after other player scores
+	if (ballX < 0) {
+		if (ballY > paddle1Y && ballY < (paddle1Y + PADDLE_HEIGHT)){
+			//Affect horizontal speed
+			ballSpeedX = -ballSpeedX;
+
+			//Affect vertical Speed
+			//Ball's vertical position - (player 1 paddle + half paddle height)
+			let directionY = ballY - (paddle1Y + PADDLE_HEIGHT/2);
+			ballSpeedY = directionY * 0.31;
+		} else {
+		//Adds point to player 2
+		player2Score++;
+		resetBall();
 		}
+	}
 
-		//If the position of the ball is greater than canvas width go left
-		if (ballX > canvas.width) {
-			if (ballY > paddle2Y && ballY < (paddle2Y + PADDLE_HEIGHT)){
-				ballSpeedX = -ballSpeedX;
-			} else {
-			resetBall();
-			//Adds point to player 1
-			player1Score++;
-			}
+	//If the position of the ball is greater than canvas width go left
+	if (ballX > canvas.width) {
+		if (ballY > paddle2Y && ballY < (paddle2Y + PADDLE_HEIGHT)){
+			ballSpeedX = -ballSpeedX;
+
+			//Ball's vertical position - (player 1 paddle + half paddle height)
+			let directionY = ballY - (paddle2Y + PADDLE_HEIGHT/2);
+			ballSpeedY = directionY * 0.31;
+		} else {
+		//Adds point to player 1, Needs to be before reset for WIN condition
+		player1Score++;
+		resetBall();
 		}
+	}
 
-		//If the position of the ball is less than 0 go right
-		if (ballY < 0) {
+	//If the position of the ball is less than 0 go right
+	if (ballY < 0) {
 
-			ballSpeedY = -ballSpeedY;
-		}
+		ballSpeedY = -ballSpeedY;
+	}
 
-		//If the position of the ball is greater than canvas width go left
-		if (ballY > canvas.height) {
-			ballSpeedY = -ballSpeedY;
-		}
+	//If the position of the ball is greater than canvas width go left
+	if (ballY > canvas.height) {
+		ballSpeedY = -ballSpeedY;
+	}
 }
 
 function drawEnvironment(){
 	//Creates a black rectangle(canvas)
-	colorRectangle(0, 0, canvas.width, canvas.height, 'blue');
+	colorRectangle(0, 0, canvas.width, canvas.height, 'darkblue');
+
+	//Blank out screen to start over
+	if (winScreen) {
+		canvasContext.fillStyle = 'white';
+		canvasContext.fillText('CLICK TO CONTINUE', 360, 300);
+		return;
+	}
 
 	//Creates a white paddle for the left player
 	colorRectangle(15, paddle1Y, PADDLE_THICKNESS, PADDLE_HEIGHT, 'white');
