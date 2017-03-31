@@ -11,7 +11,7 @@ let ballSpeedY = 5;
 
 let player1Score = 0;
 let player2Score = 0;
-const WINNING_SCORE = 2;
+const WINNING_SCORE = 9;
 
 let winScreen = false;
 
@@ -31,6 +31,14 @@ function calcMousePosition(evt) {
 	}
 }
 
+function handleMouseClick(evt) {
+	if (winScreen) {
+		player1Score = 0;
+		player2Score = 0;
+		winScreen = false;
+	}
+}
+
 window.onload = function () {
 	//Loads elements after window loads
 	canvas = document.getElementById('gameCanvas');
@@ -43,7 +51,9 @@ window.onload = function () {
     setInterval(function() { 
     	ballMovement();
     	drawEnvironment();
-    }, 1000/framesPerSecond);
+    }, 1000 / framesPerSecond);
+
+    canvas.addEventListener('mousedown', handleMouseClick)
 
     canvas.addEventListener('mousemove', 
     	function(evt) {
@@ -57,8 +67,6 @@ window.onload = function () {
 function resetBall() {
 	//Win conditions
 	if (player1Score >= WINNING_SCORE || player2Score >= WINNING_SCORE){
-		player1Score = 0;
-		player2Score = 0;
 		winScreen = true;
 	}
 
@@ -137,6 +145,14 @@ function ballMovement(){
 	}
 }
 
+function drawNet() {
+
+	for (let i = 0; i < canvas.height; i += 40) {
+		//First parameter centers net
+		colorRectangle(canvas.width / 2 - 1, i, 2, 20, 'white');
+	}
+}
+
 function drawEnvironment(){
 	//Creates a black rectangle(canvas)
 	colorRectangle(0, 0, canvas.width, canvas.height, 'darkblue');
@@ -144,9 +160,20 @@ function drawEnvironment(){
 	//Blank out screen to start over
 	if (winScreen) {
 		canvasContext.fillStyle = 'white';
-		canvasContext.fillText('CLICK TO CONTINUE', 360, 300);
+
+		if (player1Score >= WINNING_SCORE) {
+			canvasContext.fillText('LEFT PLAYER WON!', 360, 200);
+			canvasContext.fillText('CLICK TO CONTINUE', 360, 500);
+			
+		}
+		else if (player2Score >= WINNING_SCORE) {
+			canvasContext.fillText('RIGHT PLAYER WON!', 360, 200)
+			canvasContext.fillText('CLICK TO CONTINUE', 360, 500);
+		}
 		return;
 	}
+
+	drawNet();
 
 	//Creates a white paddle for the left player
 	colorRectangle(15, paddle1Y, PADDLE_THICKNESS, PADDLE_HEIGHT, 'white');
