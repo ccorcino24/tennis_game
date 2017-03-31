@@ -49,8 +49,6 @@ window.onload = function () {
     	function(evt) {
     		let mousePosition = calcMousePosition(evt);
     		paddle1Y = mousePosition.y - (PADDLE_HEIGHT/2);
-    		paddle2Y = mousePosition.y;
-
     })
 }
 
@@ -65,10 +63,24 @@ function resetBall() {
 	ballY = canvas.height/2;
 }
 
+function computerMovement(){
+	let paddle2YCenter = paddle2Y + (PADDLE_HEIGHT/2);
+
+	//Don't chase the ball if it is 35px above or below the center
+	if (paddle2YCenter < ballY - 35) {
+		 paddle2Y += 6;
+	} else if(paddle2YCenter > ballY - 35){
+		paddle2Y -= 6;
+	}
+}
+
 function ballMovement(){
+		//Computer AI
+		computerMovement();
+
 		//How fast the ball moves
-		ballX = ballX + ballSpeedX;
-		ballY = ballY + ballSpeedY;
+		ballX += ballSpeedX;
+		ballY += ballSpeedY;
 
 		//resets ball position after other player scores
 		if(ballX < 0) {
@@ -105,12 +117,18 @@ function ballMovement(){
 function drawEnvironment(){
 	//Creates a black rectangle(canvas)
 	colorRectangle(0, 0, canvas.width, canvas.height, "blue");
+
 	//Creates a white paddle for the left player
 	colorRectangle(15, paddle1Y, PADDLE_THICKNESS, PADDLE_HEIGHT, "white");
+
 	//Creates a white paddle on the for the computer
 	colorRectangle(canvas.width- 15 - PADDLE_THICKNESS, paddle2Y, PADDLE_THICKNESS, PADDLE_HEIGHT, "white"); 
+
 	//Creates the ball for the game
 	colorBall(ballX, ballY, 10, "white")
+
+	//Draw Scoreboard
+	canvasContext.fillText("Scoreboard", 100, 100);
 }
 
 function colorBall(centerX, centerY, radius, color){
