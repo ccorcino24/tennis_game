@@ -1,8 +1,7 @@
 # tennis_game
 An old school Tennis Game Clone Coded in Javascript
 
-TO PLAY:
-On the Computer go to: 
+TO PLAY on the Computer go to: 
 https://tennis-game-clone.herokuapp.com/
 
 OR 
