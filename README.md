@@ -2,7 +2,7 @@
 An old school Tennis Game Clone Coded in Javascript
 
 TO PLAY:
-Go to: 
+On the Computer go to: 
 https://tennis-game-clone.herokuapp.com/
 
 OR 
